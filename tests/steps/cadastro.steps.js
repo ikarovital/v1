@@ -3,94 +3,76 @@ const { testData, buildUniqueEmail } = require("../utils/test-data");
 const {
   abrirPaginaCadastro,
   preencherCadastro,
-  validarBoasVindas,
+  validarCadastroAposEnvio,
 } = require("../utils/cadastro-flow");
 const { screenshotAndAttach } = require("../utils/screenshot-attach");
-const { criarUsuarioViaApi, criarEmailUnico } = require("../utils/user.factory");
-const { abrirPaginaLogin, realizarLogin } = require("../utils/auth.helper");
-const {
-  realizarLogout,
-  validarRedirecionamentoParaLogin,
-} = require("../utils/sessao-flow");
+const { registerCreatedUser } = require("../utils/users.store");
 
 const { Given, When, Then } = createBdd(test);
 
 // Given: usuário acessa a página de cadastro
-Given("que acessei a pagina de cadastro de usuarios", async ({ page, $testInfo }) => {
-  await abrirPaginaCadastro(page);
-  await screenshotAndAttach(page, $testInfo, "acesso-pagina-cadastro.png");
-});
-
-// When: usuário preenche dados válidos e envia o cadastro
-When(
-  "informo nome, email e senha validos e clico em cadastrar",
+Given(
+  "que acessei a pagina de cadastro de usuarios",
   async ({ page, $testInfo }) => {
-    const email = buildUniqueEmail("cadastro");
+    await abrirPaginaCadastro(page);
+    await screenshotAndAttach(page, $testInfo, "cadastro-aberto.png");
+  }
+);
 
-    await preencherCadastro(page, {
+// When: usuário cadastra como administrador (seleciona checkbox)
+When(
+  "informo nome, email e senha validos como administrador e clico em cadastrar",
+  async ({ page, $testInfo }) => {
+    const email = buildUniqueEmail("admin-cadastro");
+    page.__usuarioCadastroAtual = {
       nome: testData.usuarioValido.nome,
       email,
       senha: testData.usuarioValido.senha,
+      administrador: true,
+    };
+
+    await preencherCadastro(page, {
+      nome: page.__usuarioCadastroAtual.nome,
+      email: page.__usuarioCadastroAtual.email,
+      senha: page.__usuarioCadastroAtual.senha,
       aceitarTermos: true,
     });
 
-    await screenshotAndAttach(page, $testInfo, "apos-cadastro-sucesso.png");
+    await screenshotAndAttach(page, $testInfo, "cadastro-admin-submit.png");
   }
 );
 
-// Then: valida boas-vindas do cadastro
-Then(
-  "devo ver a mensagem de boas-vindas com o nome do usuario",
-  async ({ page, $testInfo }) => {
-    await validarBoasVindas(page, testData.usuarioValido.nome);
-    await screenshotAndAttach(page, $testInfo, "then-boas-vindas.png");
-  }
-);
-
-// Then: realiza reaprovação (logout) após cadastro
-Then(
-  "devo reaprovar o usuario cadastrado realizando logout com sucesso",
-  async ({ page, $testInfo }) => {
-    await realizarLogout(page);
-    await validarRedirecionamentoParaLogin(page);
-    await screenshotAndAttach(
-      page,
-      $testInfo,
-      "then-reaprovacao-logout.png"
-    );
-  }
-);
-
-// Given: cria usuário administrador via API para autenticação
-Given("que existe um usuario administrador criado via API", async ({ page, request, $testInfo }) => {
-  const email = criarEmailUnico("admin");
-  const senha = "teste123";
-
-  page.__usuarioAdministrador = await criarUsuarioViaApi(request, {
-    nome: "usuario administrador",
-    email,
-    senha,
-    administrador: true,
-  });
-
-  // Garante que a página tem um contexto para o screenshot
-  await abrirPaginaLogin(page);
-  await screenshotAndAttach(page, $testInfo, "given-admin-pagina-login.png");
-});
-
-// When: autentica com o usuário administrador criado
+// When: usuário cadastra sem administrador (não seleciona checkbox)
 When(
-  "autentico com esse usuario administrador",
+  "informo nome, email e senha validos sem administrador e clico em cadastrar",
   async ({ page, $testInfo }) => {
-    const usuarioAdministrador = page.__usuarioAdministrador;
-    await realizarLogin(page, {
-      email: usuarioAdministrador.email,
-      senha: usuarioAdministrador.senha,
+    const email = buildUniqueEmail("comum-cadastro");
+    page.__usuarioCadastroAtual = {
+      nome: testData.usuarioValido.nome,
+      email,
+      senha: testData.usuarioValido.senha,
+      administrador: false,
+    };
+
+    await preencherCadastro(page, {
+      nome: page.__usuarioCadastroAtual.nome,
+      email: page.__usuarioCadastroAtual.email,
+      senha: page.__usuarioCadastroAtual.senha,
+      aceitarTermos: false,
     });
-    await screenshotAndAttach(
-      page,
-      $testInfo,
-      "when-admin-login.png"
-    );
+
+    await screenshotAndAttach(page, $testInfo, "cadastro-comum-submit.png");
+  }
+);
+
+// Then: valida que o usuário está autenticado (tela inicial logado)
+Then(
+  "devo ver a tela inicial apos cadastro",
+  async ({ page, $testInfo }) => {
+    await validarCadastroAposEnvio(page);
+    if (page.__usuarioCadastroAtual) {
+      registerCreatedUser(page.__usuarioCadastroAtual, "cadastro.feature");
+    }
+    await screenshotAndAttach(page, $testInfo, "then-tela-inicial.png");
   }
 );

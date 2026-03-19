@@ -5,25 +5,43 @@ const {
   realizarLogin,
   validarLoginComSucesso,
 } = require("../utils/sessao-flow");
+const { abrirPaginaCadastro, preencherCadastro, validarCadastroAposEnvio } = require("../utils/cadastro-flow");
 const { screenshotAndAttach } = require("../utils/screenshot-attach");
+const { registerCreatedUser } = require("../utils/users.store");
 
 const { Given, When, Then } = createBdd(test);
 let usuarioLogin;
 
-Given("que acessei a pagina de login", async ({ page, request, $testInfo }) => {
+// Given: cria um usuário via cadastro na UI e retorna para a tela de login
+Given("que acessei a pagina de login", async ({ page, $testInfo }) => {
   const email = buildUniqueEmail("login");
   const senha = "teste123";
 
-  await request.post("https://serverest.dev/usuarios", {
-    data: {
-      nome: "usuario login",
-      email,
-      password: senha,
-      administrador: "false",
-    },
+  usuarioLogin = { email, senha };
+
+  // // Setup: cadastra usuário comum via UI e permanece autenticado
+  await abrirPaginaCadastro(page);
+  await preencherCadastro(page, {
+    nome: "usuario login",
+    email,
+    senha,
+    aceitarTermos: true, // marca checkbox (admin checkbox no cadastro)
   });
 
-  usuarioLogin = { email, senha };
+  // Não assumimos que o usuário ficará logado automaticamente após cadastro.
+  // Validamos apenas que o cadastro foi aceito e então executamos o login normalmente.
+  await validarCadastroAposEnvio(page);
+  registerCreatedUser(
+    {
+      nome: "usuario login",
+      email: usuarioLogin.email,
+      senha: usuarioLogin.senha,
+      administrador: true,
+    },
+    "login-setup"
+  );
+  await screenshotAndAttach(page, $testInfo, "given-usuario-criado-via-ui.png");
+
   await abrirPaginaLogin(page);
   await screenshotAndAttach(page, $testInfo, "acesso-pagina-login.png");
 });
