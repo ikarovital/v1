@@ -17,8 +17,14 @@ async function preencherCadastro(page, { nome, email, senha, aceitarTermos = tru
 }
 
 async function validarBoasVindas(page, nome) {
+  // Espera o estado pós-cadastro (usuário logado) antes de validar o texto do título.
+  // Isso reduz flakiness quando a renderização do h1 atrasa.
+  await expect(page.locator(objects.sessao.logoutButton)).toBeVisible({
+    timeout: 15000,
+  });
   await expect(page.locator(objects.cadastro.tituloPagina)).toContainText(
-    `Bem Vindo ${nome}`
+    `Bem Vindo ${nome}`,
+    { timeout: 15000 }
   );
 }
 

@@ -5,6 +5,7 @@ const {
   realizarLogin,
   validarLoginComSucesso,
 } = require("../utils/sessao-flow");
+const { screenshotAndAttach } = require("../utils/screenshot-attach");
 
 const { Given, When, Then } = createBdd(test);
 let usuarioLogin;
@@ -24,10 +25,7 @@ Given("que acessei a pagina de login", async ({ page, request, $testInfo }) => {
 
   usuarioLogin = { email, senha };
   await abrirPaginaLogin(page);
-  await page.screenshot({
-    path: $testInfo.outputPath("acesso-pagina-login.png"),
-    fullPage: true,
-  });
+  await screenshotAndAttach(page, $testInfo, "acesso-pagina-login.png");
 });
 
 When("informo credenciais validas e clico em entrar", async ({ page, $testInfo }) => {
@@ -35,16 +33,10 @@ When("informo credenciais validas e clico em entrar", async ({ page, $testInfo }
     email: usuarioLogin.email,
     senha: usuarioLogin.senha,
   });
-  await page.screenshot({
-    path: $testInfo.outputPath("apos-login.png"),
-    fullPage: true,
-  });
+  await screenshotAndAttach(page, $testInfo, "apos-login.png");
 });
 
 Then("devo ver a tela inicial da aplicacao", async ({ page, $testInfo }) => {
   await validarLoginComSucesso(page);
-  await page.screenshot({
-    path: $testInfo.outputPath("then-login-sucesso.png"),
-    fullPage: true,
-  });
+  await screenshotAndAttach(page, $testInfo, "then-login-sucesso.png");
 });

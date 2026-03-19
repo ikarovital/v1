@@ -7,16 +7,14 @@ const {
   validarErroEmailExistente,
   validarPermaneceEmCadastro,
 } = require("../utils/cadastro-flow");
+const { screenshotAndAttach } = require("../utils/screenshot-attach");
 
 const { Given, When, Then } = createBdd(test);
 let emailExistente;
 
 Given("que acessei a pagina de cadastro de usuarios", async ({ page, $testInfo }) => {
   await abrirPaginaCadastro(page);
-  await page.screenshot({
-    path: $testInfo.outputPath("acesso-pagina-cadastro.png"),
-    fullPage: true,
-  });
+  await screenshotAndAttach(page, $testInfo, "acesso-pagina-cadastro.png");
 });
 
 When(
@@ -31,10 +29,7 @@ When(
       aceitarTermos: true,
     });
 
-    await page.screenshot({
-      path: $testInfo.outputPath("apos-cadastro-sucesso.png"),
-      fullPage: true,
-    });
+    await screenshotAndAttach(page, $testInfo, "apos-cadastro-sucesso.png");
   }
 );
 
@@ -42,10 +37,7 @@ Then(
   "devo ver a mensagem de boas-vindas com o nome do usuario",
   async ({ page, $testInfo }) => {
     await validarBoasVindas(page, testData.usuarioValido.nome);
-    await page.screenshot({
-      path: $testInfo.outputPath("then-boas-vindas.png"),
-      fullPage: true,
-    });
+    await screenshotAndAttach(page, $testInfo, "then-boas-vindas.png");
   }
 );
 
@@ -69,10 +61,7 @@ When(
       senha: testData.usuarioExistente.senha,
       aceitarTermos: true,
     });
-    await page.screenshot({
-      path: $testInfo.outputPath("tentativa-email-existente.png"),
-      fullPage: true,
-    });
+    await screenshotAndAttach(page, $testInfo, "tentativa-email-existente.png");
   }
 );
 
@@ -80,10 +69,11 @@ Then(
   "devo ver a mensagem de erro de email ja utilizado",
   async ({ page, $testInfo }) => {
     await validarErroEmailExistente(page);
-    await page.screenshot({
-      path: $testInfo.outputPath("then-erro-email-existente.png"),
-      fullPage: true,
-    });
+    await screenshotAndAttach(
+      page,
+      $testInfo,
+      "then-erro-email-existente.png"
+    );
   }
 );
 
@@ -99,10 +89,7 @@ When(
       aceitarTermos: false,
     });
 
-    await page.screenshot({
-      path: $testInfo.outputPath("cadastro-sem-termos.png"),
-      fullPage: true,
-    });
+    await screenshotAndAttach(page, $testInfo, "cadastro-sem-termos.png");
   }
 );
 
@@ -110,9 +97,6 @@ Then(
   "devo permanecer na pagina de cadastro",
   async ({ page, $testInfo }) => {
     await validarPermaneceEmCadastro(page);
-    await page.screenshot({
-      path: $testInfo.outputPath("then-sem-termos.png"),
-      fullPage: true,
-    });
+    await screenshotAndAttach(page, $testInfo, "then-sem-termos.png");
   }
 );
