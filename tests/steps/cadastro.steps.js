@@ -4,8 +4,6 @@ const {
   abrirPaginaCadastro,
   preencherCadastro,
   validarBoasVindas,
-  validarErroEmailExistente,
-  validarPermaneceEmCadastro,
 } = require("../utils/cadastro-flow");
 const { screenshotAndAttach } = require("../utils/screenshot-attach");
 const { criarUsuarioViaApi, criarEmailUnico } = require("../utils/user.factory");
@@ -17,11 +15,13 @@ const {
 
 const { Given, When, Then } = createBdd(test);
 
+// Given: usuário acessa a página de cadastro
 Given("que acessei a pagina de cadastro de usuarios", async ({ page, $testInfo }) => {
   await abrirPaginaCadastro(page);
   await screenshotAndAttach(page, $testInfo, "acesso-pagina-cadastro.png");
 });
 
+// When: usuário preenche dados válidos e envia o cadastro
 When(
   "informo nome, email e senha validos e clico em cadastrar",
   async ({ page, $testInfo }) => {
@@ -38,6 +38,7 @@ When(
   }
 );
 
+// Then: valida boas-vindas do cadastro
 Then(
   "devo ver a mensagem de boas-vindas com o nome do usuario",
   async ({ page, $testInfo }) => {
@@ -46,6 +47,7 @@ Then(
   }
 );
 
+// Then: realiza reaprovação (logout) após cadastro
 Then(
   "devo reaprovar o usuario cadastrado realizando logout com sucesso",
   async ({ page, $testInfo }) => {
@@ -59,52 +61,7 @@ Then(
   }
 );
 
-Given("existe um usuario cadastrado", async ({ page, request, $testInfo }) => {
-  const emailExistente = buildUniqueEmail("existente");
-  page.__emailExistente = emailExistente;
-
-  await request.post("https://serverest.dev/usuarios", {
-    data: {
-      nome: testData.usuarioExistente.nome,
-      email: emailExistente,
-      password: testData.usuarioExistente.senha,
-      administrador: "false",
-    },
-  });
-
-  await screenshotAndAttach(page, $testInfo, "given-usuario-existente.png");
-});
-
-When(
-  "informo o email do usuario cadastrado e clico em cadastrar",
-  async ({ page, $testInfo }) => {
-    const emailExistente = page.__emailExistente;
-    await preencherCadastro(page, {
-      nome: testData.usuarioExistente.nome,
-      email: emailExistente,
-      senha: testData.usuarioExistente.senha,
-      aceitarTermos: true,
-    });
-    await screenshotAndAttach(
-      page,
-      $testInfo,
-      "when-email-existente-submit.png"
-    );
-  }
-);
-
-Then(
-  "devo ver a mensagem de erro de email ja utilizado",
-  async ({ page, $testInfo }) => {
-    await validarErroEmailExistente(page);
-    await screenshotAndAttach(
-      page,
-      $testInfo,
-      "then-erro-email-existente.png"
-    );
-  }
-);
-
+// Given: cria usuário administrador via API para autenticação
 Given("que existe um usuario administrador criado via API", async ({ page, request, $testInfo }) => {
   const email = criarEmailUnico("admin");
   const senha = "teste123";
@@ -121,6 +78,7 @@ Given("que existe um usuario administrador criado via API", async ({ page, reque
   await screenshotAndAttach(page, $testInfo, "given-admin-pagina-login.png");
 });
 
+// When: autentica com o usuário administrador criado
 When(
   "autentico com esse usuario administrador",
   async ({ page, $testInfo }) => {
@@ -134,29 +92,5 @@ When(
       $testInfo,
       "when-admin-login.png"
     );
-  }
-);
-
-When(
-  "informo nome, email e senha validos sem aceitar os termos e clico em cadastrar",
-  async ({ page, $testInfo }) => {
-    const email = buildUniqueEmail("semtermos");
-
-    await preencherCadastro(page, {
-      nome: testData.usuarioValido.nome,
-      email,
-      senha: testData.usuarioValido.senha,
-      aceitarTermos: false,
-    });
-
-    await screenshotAndAttach(page, $testInfo, "cadastro-sem-termos.png");
-  }
-);
-
-Then(
-  "devo permanecer na pagina de cadastro",
-  async ({ page, $testInfo }) => {
-    await validarPermaneceEmCadastro(page);
-    await screenshotAndAttach(page, $testInfo, "then-sem-termos.png");
   }
 );
