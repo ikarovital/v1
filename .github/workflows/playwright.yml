@@ -21,8 +21,8 @@ jobs:
       run: npm run bddgen
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run E2E tests
-      run: npx playwright test
+    - name: Run E2E tests (BDD)
+      run: npx playwright test --project=bdd
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:

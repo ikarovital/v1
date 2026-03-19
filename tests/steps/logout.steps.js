@@ -6,10 +6,10 @@ const {
 
 const { When, Then } = createBdd(test);
 
-When("solicito logout", async ({ page }, testInfo) => {
+When("solicito logout", async ({ page, $testInfo }) => {
   await realizarLogout(page);
   await page.screenshot({
-    path: testInfo.outputPath("logout-acionado.png"),
+    path: $testInfo.outputPath("logout-acionado.png"),
     fullPage: true,
   });
 });

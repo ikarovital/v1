@@ -11,17 +11,17 @@ const {
 const { Given, When, Then } = createBdd(test);
 let emailExistente;
 
-Given("que acessei a pagina de cadastro de usuarios", async ({ page }, testInfo) => {
+Given("que acessei a pagina de cadastro de usuarios", async ({ page, $testInfo }) => {
   await abrirPaginaCadastro(page);
   await page.screenshot({
-    path: testInfo.outputPath("acesso-pagina-cadastro.png"),
+    path: $testInfo.outputPath("acesso-pagina-cadastro.png"),
     fullPage: true,
   });
 });
 
 When(
   "informo nome, email e senha validos e clico em cadastrar",
-  async ({ page }, testInfo) => {
+  async ({ page, $testInfo }) => {
     const email = buildUniqueEmail("cadastro");
 
     await preencherCadastro(page, {
@@ -32,7 +32,7 @@ When(
     });
 
     await page.screenshot({
-      path: testInfo.outputPath("apos-cadastro-sucesso.png"),
+      path: $testInfo.outputPath("apos-cadastro-sucesso.png"),
       fullPage: true,
     });
   }
@@ -44,7 +44,7 @@ Then("devo ver a mensagem de boas-vindas com o nome do usuario", async ({ page }
 
 When(
   "informo dados de um usuario ja cadastrado e clico em cadastrar",
-  async ({ page }, testInfo) => {
+  async ({ page, $testInfo }) => {
     emailExistente = buildUniqueEmail("existente");
 
     await preencherCadastro(page, {
@@ -63,7 +63,7 @@ When(
       aceitarTermos: true,
     });
     await page.screenshot({
-      path: testInfo.outputPath("tentativa-email-existente.png"),
+      path: $testInfo.outputPath("tentativa-email-existente.png"),
       fullPage: true,
     });
   }
@@ -75,7 +75,7 @@ Then("devo ver a mensagem de erro de email ja utilizado", async ({ page }) => {
 
 When(
   "informo nome, email e senha validos sem aceitar os termos e clico em cadastrar",
-  async ({ page }, testInfo) => {
+  async ({ page, $testInfo }) => {
     const email = buildUniqueEmail("semtermos");
 
     await preencherCadastro(page, {
@@ -86,7 +86,7 @@ When(
     });
 
     await page.screenshot({
-      path: testInfo.outputPath("cadastro-sem-termos.png"),
+      path: $testInfo.outputPath("cadastro-sem-termos.png"),
       fullPage: true,
     });
   }

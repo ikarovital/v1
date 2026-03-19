@@ -9,7 +9,7 @@ const {
 const { Given, When, Then } = createBdd(test);
 let usuarioLogin;
 
-Given("que acessei a pagina de login", async ({ page, request }, testInfo) => {
+Given("que acessei a pagina de login", async ({ page, request, $testInfo }) => {
   const email = buildUniqueEmail("login");
   const senha = "teste123";
 
@@ -25,18 +25,18 @@ Given("que acessei a pagina de login", async ({ page, request }, testInfo) => {
   usuarioLogin = { email, senha };
   await abrirPaginaLogin(page);
   await page.screenshot({
-    path: testInfo.outputPath("acesso-pagina-login.png"),
+    path: $testInfo.outputPath("acesso-pagina-login.png"),
     fullPage: true,
   });
 });
 
-When("informo credenciais validas e clico em entrar", async ({ page }, testInfo) => {
+When("informo credenciais validas e clico em entrar", async ({ page, $testInfo }) => {
   await realizarLogin(page, {
     email: usuarioLogin.email,
     senha: usuarioLogin.senha,
   });
   await page.screenshot({
-    path: testInfo.outputPath("apos-login.png"),
+    path: $testInfo.outputPath("apos-login.png"),
     fullPage: true,
   });
 });
