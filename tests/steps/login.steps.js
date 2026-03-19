@@ -41,6 +41,10 @@ When("informo credenciais validas e clico em entrar", async ({ page, $testInfo }
   });
 });
 
-Then("devo ver a tela inicial da aplicacao", async ({ page }) => {
+Then("devo ver a tela inicial da aplicacao", async ({ page, $testInfo }) => {
   await validarLoginComSucesso(page);
+  await page.screenshot({
+    path: $testInfo.outputPath("then-login-sucesso.png"),
+    fullPage: true,
+  });
 });

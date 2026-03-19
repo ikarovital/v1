@@ -14,6 +14,13 @@ When("solicito logout", async ({ page, $testInfo }) => {
   });
 });
 
-Then("devo ser redirecionado para a pagina de login", async ({ page }) => {
-  await validarRedirecionamentoParaLogin(page);
-});
+Then(
+  "devo ser redirecionado para a pagina de login",
+  async ({ page, $testInfo }) => {
+    await validarRedirecionamentoParaLogin(page);
+    await page.screenshot({
+      path: $testInfo.outputPath("then-logout-redirecionado.png"),
+      fullPage: true,
+    });
+  }
+);

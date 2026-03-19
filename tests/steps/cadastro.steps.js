@@ -38,9 +38,16 @@ When(
   }
 );
 
-Then("devo ver a mensagem de boas-vindas com o nome do usuario", async ({ page }) => {
-  await validarBoasVindas(page, testData.usuarioValido.nome);
-});
+Then(
+  "devo ver a mensagem de boas-vindas com o nome do usuario",
+  async ({ page, $testInfo }) => {
+    await validarBoasVindas(page, testData.usuarioValido.nome);
+    await page.screenshot({
+      path: $testInfo.outputPath("then-boas-vindas.png"),
+      fullPage: true,
+    });
+  }
+);
 
 When(
   "informo dados de um usuario ja cadastrado e clico em cadastrar",
@@ -69,9 +76,16 @@ When(
   }
 );
 
-Then("devo ver a mensagem de erro de email ja utilizado", async ({ page }) => {
-  await validarErroEmailExistente(page);
-});
+Then(
+  "devo ver a mensagem de erro de email ja utilizado",
+  async ({ page, $testInfo }) => {
+    await validarErroEmailExistente(page);
+    await page.screenshot({
+      path: $testInfo.outputPath("then-erro-email-existente.png"),
+      fullPage: true,
+    });
+  }
+);
 
 When(
   "informo nome, email e senha validos sem aceitar os termos e clico em cadastrar",
@@ -92,6 +106,13 @@ When(
   }
 );
 
-Then("devo permanecer na pagina de cadastro", async ({ page }) => {
-  await validarPermaneceEmCadastro(page);
-});
+Then(
+  "devo permanecer na pagina de cadastro",
+  async ({ page, $testInfo }) => {
+    await validarPermaneceEmCadastro(page);
+    await page.screenshot({
+      path: $testInfo.outputPath("then-sem-termos.png"),
+      fullPage: true,
+    });
+  }
+);
