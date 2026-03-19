@@ -1,6 +1,7 @@
 function buildUniqueEmail(prefix = "teste") {
   const random = Date.now();
-  return `${prefix}.${random}@usuario.com`;
+  const salt = Math.random().toString(16).slice(2);
+  return `${prefix}.${random}.${salt}@usuario.com`;
 }
 
 const testData = {
