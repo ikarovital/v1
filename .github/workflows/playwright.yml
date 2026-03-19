@@ -49,7 +49,7 @@ jobs:
           cp -R allure-report/history/. .allure-history/
         fi
     - name: Save Allure history cache
-      if: ${{ !cancelled() }}
+      if: ${{ !cancelled() && steps.allure-history-restore.outputs.cache-primary-key != '' }}
       uses: actions/cache/save@v4
       with:
         path: .allure-history
