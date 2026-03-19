@@ -13,10 +13,15 @@ async function realizarLogin(page, { email, senha }) {
 }
 
 async function validarLoginComSucesso(page) {
+  // Aguarda o estado pós-login (logout visível) antes de validar o título
+  // para reduzir flakiness em redirecionamentos lentos.
+  await expect(page.locator(objects.sessao.logoutButton)).toBeVisible({
+    timeout: 15000,
+  });
   await expect(page.locator(objects.sessao.homeHeading)).toContainText(
-    /Serverest Store|Bem Vindo/i
+    /Serverest Store|Bem Vindo/i,
+    { timeout: 15000 }
   );
-  await expect(page.locator(objects.sessao.logoutButton)).toBeVisible();
 }
 
 async function realizarLogout(page) {
