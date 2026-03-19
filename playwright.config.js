@@ -12,7 +12,7 @@ const bddTestDir = defineBddConfig({
   paths: ["tests/features/**/*.feature"],
   steps: ["tests/steps/**/*.steps.js"],
   require: ["tests/steps/**/*.steps.js"],
-  outputDir: "tests/specs-gen",
+  outputDir: "tests/specs",
 });
 
 const sharedUse = {
@@ -37,12 +37,6 @@ module.exports = defineConfig({
     {
       name: "bdd",
       testDir: bddTestDir,
-      use: { ...devices["Desktop Chrome"] },
-    },
-    {
-      name: "spec-mirror",
-      testDir: path.join(__dirname, "tests", "specs"),
-      testMatch: "**/*.spec.js",
       use: { ...devices["Desktop Chrome"] },
     },
   ],

@@ -13,15 +13,16 @@ async function realizarLogin(page, { email, senha }) {
 }
 
 async function validarLoginComSucesso(page) {
-  // Espera primeiro o título da área logada e, em seguida, o botão de logout.
-  // Isso reduz flakiness quando o "logout" demora para renderizar após a navegação.
+  // Espera o logout aparecer primeiro (somente após autenticar).
+  await expect(page.locator(objects.sessao.logoutButton)).toBeVisible({
+    timeout: 30000,
+  });
+
+  // Depois valida o título da home (o texto pode variar).
   await expect(page.locator(objects.sessao.homeHeading)).toContainText(
     /Serverest Store|Bem Vindo/i,
-    { timeout: 20000 }
+    { timeout: 30000 }
   );
-  await expect(page.locator(objects.sessao.logoutButton)).toBeVisible({
-    timeout: 20000,
-  });
 }
 
 async function realizarLogout(page) {

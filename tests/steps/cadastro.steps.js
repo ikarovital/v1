@@ -8,13 +8,14 @@ const {
   validarPermaneceEmCadastro,
 } = require("../utils/cadastro-flow");
 const { screenshotAndAttach } = require("../utils/screenshot-attach");
+const { criarUsuarioViaApi, criarEmailUnico } = require("../utils/user.factory");
+const { abrirPaginaLogin, realizarLogin } = require("../utils/auth.helper");
 const {
   realizarLogout,
   validarRedirecionamentoParaLogin,
 } = require("../utils/sessao-flow");
 
 const { Given, When, Then } = createBdd(test);
-let emailExistente;
 
 Given("que acessei a pagina de cadastro de usuarios", async ({ page, $testInfo }) => {
   await abrirPaginaCadastro(page);
@@ -59,7 +60,8 @@ Then(
 );
 
 Given("existe um usuario cadastrado", async ({ page, request, $testInfo }) => {
-  emailExistente = buildUniqueEmail("existente");
+  const emailExistente = buildUniqueEmail("existente");
+  page.__emailExistente = emailExistente;
 
   await request.post("https://serverest.dev/usuarios", {
     data: {
@@ -76,6 +78,7 @@ Given("existe um usuario cadastrado", async ({ page, request, $testInfo }) => {
 When(
   "informo o email do usuario cadastrado e clico em cadastrar",
   async ({ page, $testInfo }) => {
+    const emailExistente = page.__emailExistente;
     await preencherCadastro(page, {
       nome: testData.usuarioExistente.nome,
       email: emailExistente,
@@ -98,6 +101,38 @@ Then(
       page,
       $testInfo,
       "then-erro-email-existente.png"
+    );
+  }
+);
+
+Given("que existe um usuario administrador criado via API", async ({ page, request, $testInfo }) => {
+  const email = criarEmailUnico("admin");
+  const senha = "teste123";
+
+  page.__usuarioAdministrador = await criarUsuarioViaApi(request, {
+    nome: "usuario administrador",
+    email,
+    senha,
+    administrador: true,
+  });
+
+  // Garante que a página tem um contexto para o screenshot
+  await abrirPaginaLogin(page);
+  await screenshotAndAttach(page, $testInfo, "given-admin-pagina-login.png");
+});
+
+When(
+  "autentico com esse usuario administrador",
+  async ({ page, $testInfo }) => {
+    const usuarioAdministrador = page.__usuarioAdministrador;
+    await realizarLogin(page, {
+      email: usuarioAdministrador.email,
+      senha: usuarioAdministrador.senha,
+    });
+    await screenshotAndAttach(
+      page,
+      $testInfo,
+      "when-admin-login.png"
     );
   }
 );
