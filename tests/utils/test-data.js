@@ -13,6 +13,10 @@ const testData = {
     email: "fulano@qa.com",
     senha: "teste123",
   },
+  loginValido: {
+    email: "fulano@qa.com",
+    senha: "teste123",
+  },
 };
 
 module.exports = { testData, buildUniqueEmail };

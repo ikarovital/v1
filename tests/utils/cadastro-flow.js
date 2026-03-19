@@ -22,12 +22,6 @@ async function validarBoasVindas(page, nome) {
   );
 }
 
-async function realizarLogout(page) {
-  await expect(page.locator(objects.sessao.logoutButton)).toBeVisible();
-  await page.locator(objects.sessao.logoutButton).click();
-  await expect(page.locator(objects.sessao.loginHeading)).toContainText("Login");
-}
-
 async function validarErroEmailExistente(page) {
   await expect(page.locator(objects.cadastro.alertaErro)).toBeVisible();
   await expect(page.locator(objects.cadastro.alertaErro)).toContainText(
@@ -44,7 +38,6 @@ module.exports = {
   abrirPaginaCadastro,
   preencherCadastro,
   validarBoasVindas,
-  realizarLogout,
   validarErroEmailExistente,
   validarPermaneceEmCadastro,
 };

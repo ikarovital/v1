@@ -4,7 +4,6 @@ const {
   abrirPaginaCadastro,
   preencherCadastro,
   validarBoasVindas,
-  realizarLogout,
   validarErroEmailExistente,
   validarPermaneceEmCadastro,
 } = require("../utils/cadastro-flow");
@@ -40,14 +39,6 @@ When(
 
 Then("devo ver a mensagem de boas-vindas com o nome do usuario", async ({ page }) => {
   await validarBoasVindas(page, testData.usuarioValido.nome);
-});
-
-Then("devo conseguir realizar logout com sucesso", async ({ page }, testInfo) => {
-  await realizarLogout(page);
-  await page.screenshot({
-    path: testInfo.outputPath("logout-realizado.png"),
-    fullPage: true,
-  });
 });
 
 When(

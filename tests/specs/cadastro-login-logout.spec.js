@@ -4,13 +4,19 @@ const {
   abrirPaginaCadastro,
   preencherCadastro,
   validarBoasVindas,
-  realizarLogout,
   validarErroEmailExistente,
   validarPermaneceEmCadastro,
 } = require("../utils/cadastro-flow");
+const {
+  abrirPaginaLogin,
+  realizarLogin,
+  validarLoginComSucesso,
+  realizarLogout,
+  validarRedirecionamentoParaLogin,
+} = require("../utils/sessao-flow");
 
-test.describe("Cadastro e logout", () => {
-  test("Cadastro com sucesso e logout", async ({ page }, testInfo) => {
+test.describe("Cadastro, login e logout", () => {
+  test("Cadastro com sucesso", async ({ page }, testInfo) => {
     await abrirPaginaCadastro(page);
     await preencherCadastro(page, {
       nome: testData.usuarioValido.nome,
@@ -23,7 +29,6 @@ test.describe("Cadastro e logout", () => {
       path: testInfo.outputPath("spec-cadastro-sucesso.png"),
       fullPage: true,
     });
-    await realizarLogout(page);
   });
 
   test("Cadastro com email ja existente", async ({ page }, testInfo) => {
@@ -52,6 +57,25 @@ test.describe("Cadastro e logout", () => {
     await validarPermaneceEmCadastro(page);
     await page.screenshot({
       path: testInfo.outputPath("spec-cadastro-sem-termos.png"),
+      fullPage: true,
+    });
+  });
+
+  test("Login e logout com sucesso", async ({ page }, testInfo) => {
+    await abrirPaginaLogin(page);
+    await realizarLogin(page, {
+      email: testData.loginValido.email,
+      senha: testData.loginValido.senha,
+    });
+    await validarLoginComSucesso(page);
+    await page.screenshot({
+      path: testInfo.outputPath("spec-login-sucesso.png"),
+      fullPage: true,
+    });
+    await realizarLogout(page);
+    await validarRedirecionamentoParaLogin(page);
+    await page.screenshot({
+      path: testInfo.outputPath("spec-logout-sucesso.png"),
       fullPage: true,
     });
   });

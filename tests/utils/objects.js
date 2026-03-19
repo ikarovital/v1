@@ -9,8 +9,12 @@ const objects = {
     alertaErro: ".alert, [role='alert']",
   },
   sessao: {
+    emailInput: '[data-testid="email"]',
+    senhaInput: '[data-testid="password"]',
+    entrarButton: '[data-testid="entrar"]',
     logoutButton: '[data-testid="logout"]',
     loginHeading: "h1",
+    homeHeading: "h1",
   },
 };
 
