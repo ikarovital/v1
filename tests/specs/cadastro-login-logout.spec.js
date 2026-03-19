@@ -32,10 +32,20 @@ test.describe("Cadastro, login e logout", () => {
   });
 
   test("Cadastro com email ja existente", async ({ page }, testInfo) => {
+    const emailExistente = buildUniqueEmail("spec-existente");
+
     await abrirPaginaCadastro(page);
     await preencherCadastro(page, {
       nome: testData.usuarioExistente.nome,
-      email: testData.usuarioExistente.email,
+      email: emailExistente,
+      senha: testData.usuarioExistente.senha,
+      aceitarTermos: true,
+    });
+    await validarBoasVindas(page, testData.usuarioExistente.nome);
+    await page.goto("/cadastrarusuarios");
+    await preencherCadastro(page, {
+      nome: testData.usuarioExistente.nome,
+      email: emailExistente,
       senha: testData.usuarioExistente.senha,
       aceitarTermos: true,
     });
@@ -61,11 +71,22 @@ test.describe("Cadastro, login e logout", () => {
     });
   });
 
-  test("Login e logout com sucesso", async ({ page }, testInfo) => {
+  test("Login e logout com sucesso", async ({ page, request }, testInfo) => {
+    const loginEmail = buildUniqueEmail("spec-login");
+    const loginSenha = "teste123";
+    await request.post("https://serverest.dev/usuarios", {
+      data: {
+        nome: "usuario spec login",
+        email: loginEmail,
+        password: loginSenha,
+        administrador: "false",
+      },
+    });
+
     await abrirPaginaLogin(page);
     await realizarLogin(page, {
-      email: testData.loginValido.email,
-      senha: testData.loginValido.senha,
+      email: loginEmail,
+      senha: loginSenha,
     });
     await validarLoginComSucesso(page);
     await page.screenshot({

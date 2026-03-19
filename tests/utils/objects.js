@@ -10,7 +10,7 @@ const objects = {
   },
   sessao: {
     emailInput: '[data-testid="email"]',
-    senhaInput: '[data-testid="password"]',
+    senhaInput: '[data-testid="senha"]',
     entrarButton: '[data-testid="entrar"]',
     logoutButton: '[data-testid="logout"]',
     loginHeading: "h1",

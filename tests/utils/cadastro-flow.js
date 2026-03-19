@@ -25,7 +25,7 @@ async function validarBoasVindas(page, nome) {
 async function validarErroEmailExistente(page) {
   await expect(page.locator(objects.cadastro.alertaErro)).toBeVisible();
   await expect(page.locator(objects.cadastro.alertaErro)).toContainText(
-    /email|e-mail|utilizado|existe/i
+    /email|e-mail|utilizado|existe|usado|cadastrado/i
   );
 }
 

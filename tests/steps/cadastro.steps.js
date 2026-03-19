@@ -9,6 +9,7 @@ const {
 } = require("../utils/cadastro-flow");
 
 const { Given, When, Then } = createBdd(test);
+let emailExistente;
 
 Given("que acessei a pagina de cadastro de usuarios", async ({ page }, testInfo) => {
   await abrirPaginaCadastro(page);
@@ -44,9 +45,20 @@ Then("devo ver a mensagem de boas-vindas com o nome do usuario", async ({ page }
 When(
   "informo dados de um usuario ja cadastrado e clico em cadastrar",
   async ({ page }, testInfo) => {
+    emailExistente = buildUniqueEmail("existente");
+
     await preencherCadastro(page, {
       nome: testData.usuarioExistente.nome,
-      email: testData.usuarioExistente.email,
+      email: emailExistente,
+      senha: testData.usuarioExistente.senha,
+      aceitarTermos: true,
+    });
+    await validarBoasVindas(page, testData.usuarioExistente.nome);
+    await page.goto("/cadastrarusuarios");
+
+    await preencherCadastro(page, {
+      nome: testData.usuarioExistente.nome,
+      email: emailExistente,
       senha: testData.usuarioExistente.senha,
       aceitarTermos: true,
     });

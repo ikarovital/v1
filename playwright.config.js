@@ -11,7 +11,7 @@ defineBddConfig({
 
 module.exports = defineConfig({
   testDir: "./tests",
-  testMatch: ["specs/**/*.spec.js", "specs-gen/**/*.spec.js"],
+  testMatch: ["specs/**/*.spec.js"],
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

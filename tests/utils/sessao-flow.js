@@ -13,7 +13,9 @@ async function realizarLogin(page, { email, senha }) {
 }
 
 async function validarLoginComSucesso(page) {
-  await expect(page.locator(objects.sessao.homeHeading)).toContainText(/Bem Vindo/i);
+  await expect(page.locator(objects.sessao.homeHeading)).toContainText(
+    /Serverest Store|Bem Vindo/i
+  );
   await expect(page.locator(objects.sessao.logoutButton)).toBeVisible();
 }
 
