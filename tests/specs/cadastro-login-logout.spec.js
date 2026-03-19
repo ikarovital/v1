@@ -34,23 +34,28 @@ test.describe("Cadastro, login e logout", () => {
     });
     await validarBoasVindas(page, testData.usuarioValido.nome);
     await snapshot(page, testInfo, "spec-cadastro-validado.png");
+
+    await realizarLogout(page);
+    await validarRedirecionamentoParaLogin(page);
+    await snapshot(page, testInfo, "spec-cadastro-reaprovacao-logout.png");
   });
 
-  test("Cadastro com email ja existente", async ({ page }, testInfo) => {
+  test("Cadastro com email ja existente", async ({ page, request }, testInfo) => {
     const emailExistente = buildUniqueEmail("spec-existente");
+
+    // Garante determinismo criando o usuario via API antes de tentar cadastrar na UI
+    await request.post("https://serverest.dev/usuarios", {
+      data: {
+        nome: testData.usuarioExistente.nome,
+        email: emailExistente,
+        password: testData.usuarioExistente.senha,
+        administrador: "false",
+      },
+    });
 
     await abrirPaginaCadastro(page);
     await snapshot(page, testInfo, "spec-existente-aberto.png");
-    await preencherCadastro(page, {
-      nome: testData.usuarioExistente.nome,
-      email: emailExistente,
-      senha: testData.usuarioExistente.senha,
-      aceitarTermos: true,
-    });
-    await validarBoasVindas(page, testData.usuarioExistente.nome);
-    await snapshot(page, testInfo, "spec-existente-primeiro-validado.png");
-    await page.goto("/cadastrarusuarios");
-    await snapshot(page, testInfo, "spec-existente-navegou-novamente.png");
+
     await preencherCadastro(page, {
       nome: testData.usuarioExistente.nome,
       email: emailExistente,

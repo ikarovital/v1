@@ -9,10 +9,12 @@ Funcionalidade: Cadastro e logout de usuario
     Dado que acessei a pagina de cadastro de usuarios
     Quando informo nome, email e senha validos e clico em cadastrar
     Entao devo ver a mensagem de boas-vindas com o nome do usuario
+    E devo reaprovar o usuario cadastrado realizando logout com sucesso
 
   Cenario: Cadastro com email ja existente
     Dado que acessei a pagina de cadastro de usuarios
-    Quando informo dados de um usuario ja cadastrado e clico em cadastrar
+    E existe um usuario cadastrado
+    Quando informo o email do usuario cadastrado e clico em cadastrar
     Entao devo ver a mensagem de erro de email ja utilizado
 
   Cenario: Cadastro sem aceitar termos
